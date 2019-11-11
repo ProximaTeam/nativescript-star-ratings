@@ -9,11 +9,13 @@ import {
 import { layout } from 'tns-core-modules/ui/core/view';
 import { fromObject } from 'tns-core-modules/data/observable';
 import { Color } from 'tns-core-modules/color';
+
 export class StarRating extends StarRatingBase {
   nativeView: android.widget.RatingBar;
   private _stars;
   private _filledColor = 'blue';
   private _emptyColor = 'white';
+
   public createNativeView() {
     const nativeView = new android.widget.RatingBar(this._context);
     this._stars = nativeView.getProgressDrawable() as android.graphics.drawable.LayerDrawable;
@@ -48,10 +50,17 @@ export class StarRating extends StarRatingBase {
     this._emptyColor = color;
     if (this._stars) {
       const emptyDrawable = this._stars.getDrawable(0);
-      emptyDrawable.setColorFilter(
-        new Color('white').android,
-        android.graphics.PorterDuff.Mode.SRC_ATOP
-      );
+      if (color) {
+        emptyDrawable.setColorFilter(
+          new Color(color).android,
+          android.graphics.PorterDuff.Mode.SRC_ATOP
+        );
+      } else {
+        emptyDrawable.setColorFilter(
+          new Color('white').android,
+          android.graphics.PorterDuff.Mode.SRC_ATOP
+        );
+      }
     }
   }
 
@@ -95,11 +104,11 @@ export class StarRating extends StarRatingBase {
     }
   }
 
-  [indicatorProperty.setNative](isindicator: boolean) {
-    if (this.nativeView) {
-      this.nativeView.setIsIndicator(isindicator);
-    }
-  }
+  // [indicatorProperty.setNative](isindicator: boolean) {
+  //   if (this.nativeView) {
+  //     this.nativeView.setIsIndicator(isindicator);
+  //   }
+  // }
 
   public onLoaded() {
     super.onLoaded();
@@ -112,11 +121,13 @@ export class StarRating extends StarRatingBase {
     if (!this.nativeView) return;
     this.nativeView.setOnRatingBarChangeListener(null);
   }
+
   [valueProperty.setNative](value: number) {
     if (this.nativeView) {
       this.nativeView.setRating(Number(this.value));
     }
   }
+
   [maxProperty.setNative](max: number) {
     if (this.nativeView) {
       this.nativeView.setMax(Number(max));
